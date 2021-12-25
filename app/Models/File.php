@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class File extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
     protected $table = 'files';
 
@@ -21,5 +20,17 @@ class File extends Model
     public function getFullFilePathAttribute()
     {
         return asset('storage/' . $this->full_file);
+    }
+
+    // scopes local
+
+    public function scopeFileType($query,$value)
+    {
+        return $query->where('file_type','=',$value);
+    }
+
+    public function scopeRelationId($query,$value)
+    {
+        return $query->where('relation_id','=',$value);
     }
 }

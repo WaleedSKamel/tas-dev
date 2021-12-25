@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title','Supervisor List')
-@section('heading','Supervisors')
+@section('title','Product List')
+@section('heading','Products')
 @section('before_css')
     @include('layouts.partials.datatables.css')
     <style type="text/css">
@@ -14,15 +14,15 @@
 @stop
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Supervisor List</li>
+    <li class="breadcrumb-item active">Product List</li>
 @stop
 
 @section('content')
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Supervisor List
-                    <a href="{{ route("admin.supervisor.create") }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Supervisor</a></h3>
+                <h3 class="card-title">Product List
+                    <a href="{{ route("supervisor.product.create") }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Product</a></h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -35,10 +35,9 @@
                             @endif
                         </th>
                         <th>#</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Blocked</th>
+                        <th>Category Name</th>
+                        <th>Product Name</th>
+                        <th>Image</th>
                         <th>Created On</th>
                         <th>Action</th>
                     </tr>
@@ -50,10 +49,9 @@
                                 <input type="checkbox" name="ids[]" value="{{ $row->id }}" class="checkbox" id="chk{{ $row->id }}" onclick='checkcheckbox();'>
                             </td>
                             <td>{{ $key + 1 }}</td>
-                            <td>{{ $row->username }}</td>
-                            <td>{{ $row->email }}</td>
-                            <td>{{ $row->phone }}</td>
-                            <td>{{ $row->blocked == 1 ? 'Block' : 'Unblock' }}</td>
+                            <td>{{ $row->category->name }}</td>
+                            <td>{{ $row->name }}</td>
+                            <td><img src="{{$row->imagePath}}" height="70px" width="70px"></td>
                             <td>{{$row->created_at->diffForHumans() }}</td>
                             <td>
                                 <div class="btn-group">
@@ -62,19 +60,14 @@
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>
                                     <div class="dropdown-menu custom" role="menu">
-                                        <a class="dropdown-item changepass" data-id="{{$row->id}}" data-toggle="modal" data-target="#changepass" title="Change Password"><i class="fa fa-key"></i> Change Password</a>
-                                        <a class="dropdown-item" href="{{ route('admin.supervisor.show',$row->id)}}"> <span aria-hidden="true" class="fa fa-eye"></span> View</a>
-                                        <a class="dropdown-item" href="{{ route('admin.supervisor.edit',$row->id)}}"> <span aria-hidden="true" class="fa fa-edit"></span> Edit</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#viewImages-{{$row->id}}" title="View Images"><i class="fa fa-eye"></i> View Images</a>
+
+                                        <a class="dropdown-item" href="{{ route('supervisor.product.edit',$row->id)}}"> <span aria-hidden="true" class="fa fa-edit"></span> Edit</a>
                                         <a class="dropdown-item" data-id="{{$row->id}}" data-toggle="modal" data-target="#myModal"><span aria-hidden="true" class="fa fa-trash"></span> Delete</a>
-                                        @if($row->blocked == 1)
-                                            <a class="dropdown-item" href="{{ route('admin.supervisor.status',$row->id) }}" title="Unblock Supervisor"><span class="fa fa-check"></span> Unblock Supervisor</a>
-                                        @else
-                                            <a class="dropdown-item" href="{{ route('admin.supervisor.status',$row->id) }}" title="Block Supervisor"><span class="fa fa-times"> </span> Block Supervisor
-                                            </a>
-                                        @endif
+
                                     </div>
                                 </div>
-                                {!! Form::open(['url' => route('admin.supervisor.destroy',$row->id),'method'=>'DELETE','class'=>'form-horizontal','id'=>'form_'.$row->id]) !!}
+                                {!! Form::open(['url' => route('supervisor.product.destroy',$row->id),'method'=>'DELETE','class'=>'form-horizontal','id'=>'form_'.$row->id]) !!}
                                 {!! Form::hidden("id",$row->id) !!}
                                 {!! Form::close() !!}
                             </td>
@@ -89,10 +82,9 @@
                             @endif
                         </th>
                         <th>#</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Blocked</th>
+                        <th>Category Name</th>
+                        <th>Product Name</th>
+                        <th>Image</th>
                         <th>Created On</th>
                         <th>Action</th>
                     </tr>
@@ -103,7 +95,42 @@
         </div>
         <!-- /.card -->
     </div>
+    @foreach($data as $key => $row)
+        <div class="modal fade" id="viewImages-{{$row->id}}">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Images Product Name {{ $row->name }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            @foreach($row->images()->get() as $image)
+                                <div class="col-3" id="imageId_{{$image->id}}">
+                                    <div class="form-group">
+                                        <img src="{{  $image->fullFilePath }}" class="image-preview" height="100px" width="100px">
+                                        <br>
+                                        <br>
+                                        <button id="deleteImages" type="button" data-image="{{ $image->id }}"
+                                                data-product="{{ $row->id }}" class="btn btn-danger">Remove
+                                        </button>
+                                    </div>
 
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    @endforeach
 
     <!-- Modal -->
     <div id="bulkModal" class="modal fade" role="dialog">
@@ -115,7 +142,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    {!! Form::open(['url'=> route('admin.supervisor.multiple-delete'),'method'=>'POST','id'=>'form_delete']) !!}
+                    {!! Form::open(['url'=> route('supervisor.product.multiple-delete'),'method'=>'POST','id'=>'form_delete']) !!}
                     <div id="bulk_hidden"></div>
                     <p>Are you sure you want to Delete selected records..?</p>
                 </div>
@@ -150,38 +177,6 @@
     </div>
     <!-- Modal -->
 
-    <!-- Modal -->
-    <div id="changepass" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Change Password</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="change" action="{{ route('admin.supervisor.change-password')}}" method="POST">
-                        @csrf
-                        {!! Form::hidden('id',"",['id'=>'supervisor_id'])!!}
-                        <div class="form-group">
-                            {!! Form::label('password','Password',['class'=>"form-label"]) !!}
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-lock"></i></span></div>
-                                {!! Form::password('password',['class'=>"form-control",'id'=>'password']) !!}
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="password" class="btn btn-info" type="submit">Change Password</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal -->
 @stop
 
 @section('before_js')
@@ -191,6 +186,35 @@
 
 @push('js')
     <script>
+
+        $(document).on('click', '#deleteImages', function () {
+            var imageId = $(this).data("image");
+            var productId = $(this).data("product");
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('supervisor.product.delete-images') }}",
+                method: 'POST',
+                data: {
+                    'product_id': productId,
+                    'file_id': imageId
+                },
+                cache: false,
+                dataType: "json",
+
+                success: function (response) {
+                    if (response.success == true) {
+                        $("#imageId_" + imageId).remove();
+                        alertify.success(response.message).delay(10000);
+                    } else {
+                        alertify.error(response.message).delay(10000);
+                    }
+                },
+
+            });
+
+        });
 
         $("#del_btn").on("click", function () {
             var id = $(this).data("submit");
@@ -202,10 +226,6 @@
             $("#del_btn").attr("data-submit", id);
         });
 
-        $('#changepass').on('show.bs.modal', function (e) {
-            var id = e.relatedTarget.dataset.id;
-            $("#supervisor_id").val(id);
-        });
 
         $('input[type="checkbox"]').on('click', function () {
             $('#bulk_delete').removeAttr('disabled');
@@ -260,6 +280,8 @@
                 $('#chk_all').prop('checked', false);
             }
         }
+
+
     </script>
 @endpush
 

@@ -30,7 +30,7 @@ class supervisor extends Authenticatable
         return asset('storage/' . $this->avatar);
     }
 
-    public function getNameAttribute($value)
+    public function getUsernameAttribute($value)
     {
         return ucfirst($value);
     }

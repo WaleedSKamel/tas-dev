@@ -55,11 +55,13 @@ class UploadFileRepository extends BaseRepository implements UploadFileRepositor
         if (\request()->hasFile($data['file']) && $data['upload_type'] == 'single') {
             Storage::has($data['delete_file']) ? Storage::delete($data['delete_file']) : '';
             return \request()->file($data['file'])->store($data['path']);
-        } elseif (\request()->hasFile($data['file']) && $data['upload_type'] == 'files' && $data['multi_upload'] == null) {
+        }
+        elseif (\request()->hasFile($data['file']) && $data['upload_type'] == 'files' && $data['multi_upload'] == null) {
 
             $file = \request()->file($data['file']);
             return $this->storeFile($file, $data);
-        } elseif (\request()->hasFile($data['file']) && $data['upload_type'] == 'files' && $data['multi_upload'] == true) {
+        }
+        elseif (\request()->hasFile($data['file']) && $data['upload_type'] == 'files' && $data['multi_upload'] == true) {
             $files = \request()->file($data['file']);
 
             foreach ($files as $file) {

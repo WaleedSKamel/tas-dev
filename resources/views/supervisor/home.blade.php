@@ -1,17 +1,18 @@
+
 @extends('layouts.app')
 
 @section('title','Home')
 @section('heading','Home')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Admin Home</li>
-    @stop
+    <li class="breadcrumb-item active">Supervisor Home</li>
+@stop
 
 @section('content')
     <!-- Default box -->
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Admin Home</h3>
+            <h3 class="card-title">Supervisor Home</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

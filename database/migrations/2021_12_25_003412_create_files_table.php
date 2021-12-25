@@ -23,7 +23,6 @@ class CreateFilesTable extends Migration
             $table->string('mime_type')->nullable();
             $table->string('file_type')->nullable(); // news / product /whatever
             $table->string('relation_id')->nullable(); // not unique
-            $table->softDeletes();
             $table->timestamps();
         });
     }

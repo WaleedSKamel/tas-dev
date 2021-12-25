@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Interfaces\BaseRepository\BaseRepositoryInterface;
+use App\Interfaces\Category\CategoryRepositoryInterface;
 use App\Interfaces\UploadFile\UploadFileRepositoryInterface;
 use App\Repositories\BaseRepository\BaseRepository;
+use App\Repositories\Category\CategoryRepository;
 use App\Repositories\UploadFile\UploadFileRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,5 +31,6 @@ class RepositoryProvider extends ServiceProvider
     {
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         $this->app->bind(UploadFileRepositoryInterface::class, UploadFileRepository::class);
+        $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
     }
 }

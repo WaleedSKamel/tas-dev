@@ -21,7 +21,7 @@ class BaseRepository
     // fetch all data
     public function all()
     {
-        return $this->model->all();
+        return $this->model->orderByDesc('created_at')->get();
     }
 
     // store in model
@@ -33,26 +33,26 @@ class BaseRepository
     // show in model
     public function show($id)
     {
-        return $this->model->find($id);
+        return $this->model->findOrFail($id);
     }
 
     // edit in model
     public function edit($id)
     {
-        return $this->model->find($id);
+        return $this->model->findOrFail($id);
     }
 
     // update in model
     public function update($id,array $data)
     {
-        return $this->model->find($id)
+        return $this->model->findOrFail($id)
             ->update($data);
     }
 
     // delete in model
     public function delete($id)
     {
-        return $this->model->find($id)
+        return $this->model->findOrFail($id)
             ->delete();
     }
 
