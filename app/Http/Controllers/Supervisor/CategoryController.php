@@ -33,7 +33,7 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $data = $this->categoryRepositoryInterface->all();
+            $data = $this->categoryRepositoryInterface->getModel()->withCount(['products'])->orderByDesc('created_at')->get();
 
             return view('supervisor.category.index', compact('data'));
         } catch (\Exception $exception) {
@@ -139,12 +139,16 @@ class CategoryController extends Controller
     {
         try {
             DB::beginTransaction();
-            $categories = Category::query()->whereIn('id',$request->ids);
+            $categories = Category::query()->with(['products'])->whereIn('id',$request->ids);
             $icons = $categories->pluck('icon');
+            foreach ($categories->get() as $product){
+                $product->products()->delete();
+            }
             if ($categories->delete()) {
                 foreach ($icons as $icon){
                     Storage::delete($icon);
                 }
+
                 DB::commit();
                 return redirect()->route('supervisor.category.index')->with('success', 'Done Deleted Data Successfully');
             }

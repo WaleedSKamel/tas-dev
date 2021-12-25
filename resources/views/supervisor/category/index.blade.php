@@ -36,6 +36,7 @@
                         </th>
                         <th>#</th>
                         <th>Name</th>
+                        <th>Count Products</th>
                         <th>Icon</th>
                         <th>Created On</th>
                         <th>Action</th>
@@ -49,6 +50,7 @@
                             </td>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $row->name }}</td>
+                            <td>{{ $row->products_count }}</td>
                             <td><img src="{{$row->iconPath}}" height="70px" width="70px"> </td>
                             <td>{{$row->created_at->diffForHumans() }}</td>
                             <td>
@@ -78,6 +80,7 @@
                         </th>
                         <th>#</th>
                         <th>Name</th>
+                        <th>Count Products</th>
                         <th>Icon</th>
                         <th>Created On</th>
                         <th>Action</th>
